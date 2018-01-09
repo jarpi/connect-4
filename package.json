@@ -1,0 +1,17 @@
+{
+  "name": "connect-4",
+  "version": "0.0.1",
+  "description": "A simple realtime multiplayer connect 4",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "connect-4",
+    "nodejs",
+    "socketio",
+    "react"
+  ],
+  "author": "@jarpi",
+  "license": "UNLICENSED"
+}

@@ -6,6 +6,7 @@ var source = require('vinyl-source-stream')
 var nib = require('nib')
 var minify = require('gulp-minify-css')
 var server = require('gulp-live-server')
+var concat = require('gulp-concat')
 var serverInstance = null
 
 gulp.task('webserver', function() {
@@ -18,17 +19,14 @@ gulp.task('build-webserver', function() {
     serverInstance.start();
 })
 
-gulp.task('stylus', function() {
-  gulp.src('./lib/front/styles/style.styl')
-    .pipe(stylus({
-      use: nib(),
-      'include css': true,
-    }))
+gulp.task('build-css', function() {
+  gulp.src('./lib/front/components/**/**/*.css')
     .pipe(minify())
-    .pipe(gulp.dest('./public/css/'))
+    .pipe(concat('style.min.css'))
+    .pipe(gulp.dest('./public/css'))
 })
 
-gulp.task('build', function() {
+gulp.task('build-react', function() {
   browserify({
     entries: './lib/front/index.jsx',
     extensions: ['.jsx', '.js'],
@@ -41,9 +39,9 @@ gulp.task('build', function() {
 })
 
 gulp.task('watch', function() {
-  gulp.watch('./lib/front/**/**/*.jsx', ['build'])
+  gulp.watch('./lib/front/**/**/*.jsx', ['build-react'])
   gulp.watch('./lib/**/**/*.js', ['build-webserver'])
-  gulp.watch(['./lib/front/styles/**/*.styl', './lib/front/components/**/*.styl'], ['stylus'])
+  gulp.watch(['./lib/front/components/**/**/*.css'], ['build-css'])
 })
 
 gulp.task('default', ['webserver', 'watch'])

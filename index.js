@@ -6,6 +6,7 @@ var mongoose = require('mongoose');
 var config = require('./lib/config.json');
 var routes = require('./lib/routes/index.js');
 var app = express();
+
 var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
 app.use(express.static('public'))
@@ -57,4 +58,3 @@ initDB()
     .catch(function(err) {
         console.dir(err);
     });
-

@@ -1,22 +1,22 @@
-var gulp = require('gulp')
-var stylus = require('gulp-stylus')
-var browserify = require('browserify')
-var babelify = require('babelify')
-var source = require('vinyl-source-stream')
-var nib = require('nib')
-var minify = require('gulp-minify-css')
-var server = require('gulp-live-server')
-var concat = require('gulp-concat')
-var serverInstance = null
+let gulp = require('gulp')
+let stylus = require('gulp-stylus')
+let browserify = require('browserify')
+let babelify = require('babelify')
+let source = require('vinyl-source-stream')
+let nib = require('nib')
+let minify = require('gulp-minify-css')
+let server = require('gulp-live-server')
+let concat = require('gulp-concat')
+let serverInstance = null
 
 gulp.task('webserver', function() {
-  serverInstance = server.new('./index.js');
-    serverInstance.start();
+  serverInstance = server.new('./index.js')
+    serverInstance.start()
 })
 
 gulp.task('build-webserver', function() {
-    serverInstance.stop();
-    serverInstance.start();
+    serverInstance.stop()
+    serverInstance.start()
 })
 
 gulp.task('build-css', function() {
@@ -40,7 +40,8 @@ gulp.task('build-react', function() {
 
 gulp.task('watch', function() {
   gulp.watch('./lib/front/**/**/*.jsx', ['build-react'])
-  gulp.watch('./lib/**/**/*.js', ['build-webserver'])
+  gulp.watch('./lib/**/**/**/*.js', ['build-webserver', 'build-react'])
+  gulp.watch('./*.js', ['build-webserver'])
   gulp.watch(['./lib/front/components/**/**/*.css'], ['build-css'])
 })
 

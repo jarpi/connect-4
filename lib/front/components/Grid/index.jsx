@@ -6,6 +6,9 @@ class Grid extends React.Component {
 	constructor(props) {
 		super(props)
 		this.sdk = new sdk()
+		this.sdk.registerEvent('userId', data => {
+      console.dir(data)
+    })
 	}
 
 	getCells() {

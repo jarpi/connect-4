@@ -58,23 +58,37 @@ initDB()
     .then(function(){
       // Init websocket events
       ws.on('connection', (socket) => {
+        socket.emit('userId', socket.id)
         console.dir('client connected')
         users.push(socket)
+        users.forEach(user => {
+          user.emit("getUsersList", JSON.stringify(users
+            .filter(soc => { return soc.id !== user.id })
+            .map(user => { return user.id })))
+        })
         socket.on('disconnect', () => {
           console.dir('client disconnected')
-          users = users.filter(soc => { soc.id === socket.id })
-          console.dir(users)
+          users = users.filter(soc => { return soc.id !== socket.id })
+          users.forEach(user => {
+            user.emit("getUsersList", JSON.stringify(users
+              .filter(soc => { return soc.id !== user.id })
+              .map(user => { return user.id })))
+          })
         })
         socket.on('getUsersList', data => {
           console.dir('getUsersList')
-          socket.emit("getUsersList", JSON.stringify(users.map(user => { return user.id})))
+          const opponents = users
+          .filter( userId => { return userId !== socket.id })
+          .map(user => { return user.id })
+          console.dir('opponents')
+          console.dir(opponents)
+          socket.emit("getUsersList", JSON.stringify(opponents))
         })
         socket.on('inviteUser', data => {
           let userId = JSON.parse(data).user
           console.dir('inviteUser ' + userId)
           const sock = users
-          .filter(user => { return user.id === userId })
-          .reduce( acc => { return acc })
+          .reduce( (acc, e) => { return (e ? e : acc) }, null)
           if (!sock) {
             console.dir(userId + ' not found');
             return

@@ -20,7 +20,7 @@ class UsersList extends React.Component {
 	render() {
     return (<div className="users-list"><h2>Users list</h2><ul>{
       this.state.usersList.map(userId => {
-        return <li key="{userId}" onClick={this.handleClick.bind(this, userId)}>{userId}</li>
+        return <li key={userId} onClick={this.handleClick.bind(this, userId)}>{userId}</li>
       })}
     </ul></div>)
 	}

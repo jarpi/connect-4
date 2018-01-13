@@ -11,12 +11,16 @@ class UsersList extends React.Component {
       this.setState({usersList:JSON.parse(data)})
     })
     this.sdk.emitEvt('getUsersList')
+    this.handleClick = userId => {
+      console.dir('click ' + userId)
+      this.sdk.emitEvt('inviteUser', JSON.stringify({user: userId}))
+    }
 	}
 
 	render() {
-    return (<div className="users-list"><ul>{
+    return (<div className="users-list"><h2>Users list</h2><ul>{
       this.state.usersList.map(userId => {
-        return <li key="{userId}">{userId}</li>
+        return <li key="{userId}" onClick={this.handleClick.bind(this, userId)}>{userId}</li>
       })}
     </ul></div>)
 	}

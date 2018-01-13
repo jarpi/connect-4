@@ -69,6 +69,11 @@ initDB()
           console.dir(socket.id)
           socket.emit("getUsersList", JSON.stringify(users.map(user => { return user.id})))
         })
+        socket.on('inviteUser', data => {
+          user = JSON.parse(data).user
+          const sock = users.filter(user => { return user.id === user}))
+          sock.emit("invite", socket.id)
+        })
       })
       return
     })

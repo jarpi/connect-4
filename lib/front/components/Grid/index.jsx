@@ -1,10 +1,11 @@
 import React from 'react'
-import sdk from './sdk.js'
+import sdk from '../Sdk/sdk.js'
 
 class Grid extends React.Component {
 
 	constructor(props) {
 		super(props)
+		this.sdk = new sdk()
 	}
 
 	getCells() {

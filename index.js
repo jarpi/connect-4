@@ -11,6 +11,8 @@ let ws = require('socket.io')(server)
 
 let bodyParser = require('body-parser')
 let methodOverride = require('method-override')
+let users = []
+
 app.use(express.static('public'))
 app.use(bodyParser.urlencoded({
             extended: false
@@ -57,12 +59,16 @@ initDB()
       // Init websocket events
       ws.on('connection', (socket) => {
         console.dir('client connected')
+        users.push(socket)
         socket.on('disconnect', () => {
           console.dir('client disconnected')
+          users = users.filter(soc => { soc.id === socket.id })
+          console.dir(users)
         })
-      })
-      ws.on('someEvt', (evt) => {
-        console.dir('evt received' + evt)
+        socket.on('getUsersList', data => {
+          console.dir(socket.id)
+          socket.emit("getUsersList", JSON.stringify(users.map(user => { return user.id})))
+        })
       })
       return
     })

@@ -66,13 +66,21 @@ initDB()
           console.dir(users)
         })
         socket.on('getUsersList', data => {
-          console.dir(socket.id)
+          console.dir('getUsersList')
           socket.emit("getUsersList", JSON.stringify(users.map(user => { return user.id})))
         })
         socket.on('inviteUser', data => {
-          user = JSON.parse(data).user
-          const sock = users.filter(user => { return user.id === user}))
-          sock.emit("invite", socket.id)
+          let userId = JSON.parse(data).user
+          console.dir('inviteUser ' + userId)
+          const sock = users
+          .filter(user => { return user.id === userId })
+          .reduce( acc => { return acc })
+          if (!sock) {
+            console.dir(userId + ' not found');
+            return
+          }
+          console.dir(JSON.stringify({host: socket.id}))
+          sock.emit("invite", JSON.stringify({host: socket.id}))
         })
       })
       return

@@ -102,13 +102,32 @@ initDB()
           console.dir('invitation accepted src: ' + socket.id + ' dst: ' + userId)
           const gameId = socket.id + '/' + userId
           gamesInProgress[gameId] = {
-            grid:[[].fill(6)].fill(7),
+            grid:Array(6).fill([]).map(_ => {return Array(7).fill(0)}),
             turn: socket.id,
             gameId: gameId
           }
           const userIdSock = users.find( user => { return user.id === userId } )
-          socket.emit('move', JSON.stringify(gamesInProgress[gameId]))
-          userIdSock.emit('move', JSON.stringify(gamesInProgress[gameId]))
+          socket.emit('gridChange', JSON.stringify(gamesInProgress[gameId]))
+          if (userIdSock) userIdSock.emit('gridChange', JSON.stringify(gamesInProgress[gameId]))
+        })
+        socket.on('move', data => {
+          const gameInfo = JSON.parse(data)
+          const currentGameInfo = gamesInProgress[gameInfo.gameId]
+          console.dir('move received')
+          console.dir(gameInfo)
+          console.dir(currentGameInfo)
+          const row = currentGameInfo.grid.reduce((acc, r, i) => {
+    				return (!r[gameInfo.moveCol] ? i : acc)
+    			}, null)
+          if (!row) return socket.emit('invalidMove')
+    			currentGameInfo.grid[row][gameInfo.moveCol] = socket.id
+          const players = currentGameInfo.gameId.split('/')
+          const opponentId = players.find(p => { return p !== currentGameInfo.turn })
+          const opponentSocket = users.find(s => { return s.id === opponentId })
+          currentGameInfo.turn = opponentId
+          const gameInfoJson = JSON.stringify(currentGameInfo)
+          socket.emit('gridChange', gameInfoJson)
+          opponentSocket.emit('gridChange', gameInfoJson)
         })
       })
       return

@@ -3,3 +3,9 @@
   width:100px;
   border:1px solid red;
 }
+.user-move {
+  background-color: red;
+}
+.opponent-move {
+  background-color: blue;
+}

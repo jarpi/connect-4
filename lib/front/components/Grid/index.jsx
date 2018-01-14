@@ -5,24 +5,42 @@ class Grid extends React.Component {
 
 	constructor(props) {
 		super(props)
+		this.state = {gameInfo:null}
 		this.sdk = new sdk()
 		this.sdk.registerEvent('userId', data => {
       console.dir(data)
+			this.setState({myUserId: data})
     })
+		this.sdk.registerEvent('invalidMove', _ => {
+      console.dir('Invalid move')
+    })
+		this.sdk.registerEvent('gridChange', data => {
+			console.dir('grid received')
+			const gameInfo = JSON.parse(data)
+			console.dir(this)
+			this.setState({gameInfo: gameInfo})
+		})
+		this.handleMove = (col) => {
+			if (this.state.gameInfo.turn !== this.state.myUserId) return console.log('Not your turn')
+			const gameInfo = this.state.gameInfo
+			console.dir(gameInfo.grid)
+			gameInfo.moveCol = col
+			this.sdk.emitEvt('move', JSON.stringify(gameInfo))
+		}
 	}
 
-	getCells() {
-		let cells = []
-    for (let x=0; x<this.props.cols; x++){
-      cells.push(<div className='cell' key={x}></div>)
+	getCols(row) {
+		let cols = []
+    for (let colNum=0; colNum<this.props.cols; colNum++){
+      cols.push(<div className={this.state.gameInfo.grid[row][colNum] === this.state.myUserId ? 'user-move' : 'opponent-move'} onClick={this.handleMove.bind(this, colNum)} className='cell' key={colNum}></div>)
 		}
-    return cells
+    return cols
   }
 
 	render() {
     let rows = []
-    for (let i=0;i<this.props.rows;i++) {
-      rows.push(<div className='row' key={i} id={"row" + i}>{this.getCells()}</div>)
+    for (let rowNum=0;rowNum<this.props.rows;rowNum++) {
+      rows.push(<div className='row' key={rowNum} id={"row" + rowNum}>{this.getCols(rowNum)}</div>)
     }
     return (<div id="grid">{rows}</div>)
 	}

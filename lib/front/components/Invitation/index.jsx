@@ -13,7 +13,7 @@ class InvitationsList extends React.Component {
 		})
     this.handleClick = userId => {
       console.dir('click ' + userId)
-      this.sdk.emitEvt('inviteUser', JSON.stringify({user: userId}))
+      this.sdk.emitEvt('acceptInvite', JSON.stringify({user: userId}))
     }
 	}
 

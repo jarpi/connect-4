@@ -12,6 +12,7 @@ let ws = require('socket.io')(server)
 let bodyParser = require('body-parser')
 let methodOverride = require('method-override')
 let users = []
+let gamesInProgress = {}
 
 app.use(express.static('public'))
 app.use(bodyParser.urlencoded({
@@ -78,8 +79,8 @@ initDB()
         socket.on('getUsersList', data => {
           console.dir('getUsersList')
           const opponents = users
-          .filter( userId => { return userId !== socket.id })
           .map(user => { return user.id })
+          .filter( userId => { return userId !== socket.id })
           console.dir('opponents')
           console.dir(opponents)
           socket.emit("getUsersList", JSON.stringify(opponents))
@@ -88,13 +89,26 @@ initDB()
           let userId = JSON.parse(data).user
           console.dir('inviteUser ' + userId)
           const sock = users
-          .reduce( (acc, e) => { return (e ? e : acc) }, null)
+          .find( (opponent) => { return opponent.id === userId })
           if (!sock) {
             console.dir(userId + ' not found');
             return
           }
           console.dir(JSON.stringify({host: socket.id}))
           sock.emit("invite", JSON.stringify({host: socket.id}))
+        })
+        socket.on('acceptInvite', data => {
+          let userId = JSON.parse(data).user
+          console.dir('invitation accepted src: ' + socket.id + ' dst: ' + userId)
+          const gameId = socket.id + '/' + userId
+          gamesInProgress[gameId] = {
+            grid:[[].fill(6)].fill(7),
+            turn: socket.id,
+            gameId: gameId
+          }
+          const userIdSock = users.find( user => { return user.id === userId } )
+          socket.emit('move', JSON.stringify(gamesInProgress[gameId]))
+          userIdSock.emit('move', JSON.stringify(gamesInProgress[gameId]))
         })
       })
       return

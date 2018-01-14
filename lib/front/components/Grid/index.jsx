@@ -23,7 +23,6 @@ class Grid extends React.Component {
 		this.handleMove = (col) => {
 			if (this.state.gameInfo.turn !== this.state.myUserId) return console.log('Not your turn')
 			const gameInfo = this.state.gameInfo
-			console.dir(gameInfo.grid)
 			gameInfo.moveCol = col
 			this.sdk.emitEvt('move', JSON.stringify(gameInfo))
 		}
@@ -31,8 +30,12 @@ class Grid extends React.Component {
 
 	getCols(row) {
 		let cols = []
-    for (let colNum=0; colNum<this.props.cols; colNum++){
-      cols.push(<div className={this.state.gameInfo.grid[row][colNum] === this.state.myUserId ? 'user-move' : 'opponent-move'} onClick={this.handleMove.bind(this, colNum)} className='cell' key={colNum}></div>)
+    for (let colNum=0; colNum<this.props.cols; colNum++) {
+			const className = ['cell', (this.state.gameInfo && this.state.gameInfo.grid ?
+				(!this.state.gameInfo.grid[row][colNum] ? '' :
+				this.state.gameInfo.grid[row][colNum] === this.state.myUserId ? 'user-move' : 'opponent-move') : '')]
+				.join(' ')
+			cols.push(<div className={className} onClick={this.handleMove.bind(this, colNum)} key={colNum}></div>)
 		}
     return cols
   }
@@ -40,7 +43,7 @@ class Grid extends React.Component {
 	render() {
     let rows = []
     for (let rowNum=0;rowNum<this.props.rows;rowNum++) {
-      rows.push(<div className='row' key={rowNum} id={"row" + rowNum}>{this.getCols(rowNum)}</div>)
+      rows.push(<div className='row' key={rowNum} id={'row' + rowNum}>{this.getCols(rowNum)}</div>)
     }
     return (<div id="grid">{rows}</div>)
 	}

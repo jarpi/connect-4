@@ -14,6 +14,9 @@ class Grid extends React.Component {
 		this.sdk.registerEvent('invalidMove', _ => {
       console.dir('Invalid move')
     })
+		this.sdk.registerEvent('winner', _ => {
+      console.dir('You win')
+    })
 		this.sdk.registerEvent('gridChange', data => {
 			console.dir('grid received')
 			const gameInfo = JSON.parse(data)

@@ -28,35 +28,41 @@ function initHttp() {
             if (err) {
                 return reject(err)
             }
-                return resolve(true)
-        })
-    })
-}
-
-function initDB() {
-    return new Promise(function(resolve, reject) {
-        mongoose.connection.on('error', function(err){
-            console.dir(err)
-        })
-
-        mongoose.connection.once('open', function(){
-            console.log('Connection to DB initialized!')
-        })
-
-        mongoose.connect(config.db_host, function(err){
-            if (err) {
-                return reject(err)
-            }
+            console.dir('server listening on: ' + port)
             return resolve(true)
         })
     })
 }
 
-initDB()
-    .then(function() {
-        console.log('app initialized on port ' + port)
-    })
+const check4InARow = (grid, row, col, playerId) => {
+    // Check vertical
+    let hasMatchVertical = 0;
+    let hasMatchHorizontal = 0;
+    let hasMatchDiagonal = 0;
+    for (let rowToCheck=row;rowToCheck<6 && grid[rowToCheck][col] === playerId;rowToCheck++, hasMatchVertical++);
+    for (let rowToCheck=row-1;rowToCheck>=0 && grid[rowToCheck][col] === playerId;rowToCheck--, hasMatchVertical++);
+    console.dir('hasMatchVertical ' + hasMatchVertical)
+    if (hasMatchVertical >= 4) return true
+    // Check horizontal
+    for (let colToCheck=col;colToCheck<7 && grid[row][colToCheck] === playerId;colToCheck++, hasMatchHorizontal++);
+    for (let colToCheck=col-1;colToCheck>=0 && grid[row][colToCheck] === playerId;colToCheck--, hasMatchHorizontal++);
+    console.dir('hasMatchHorizontal ' + hasMatchHorizontal)
+    if (hasMatchHorizontal >= 4) return true
+    // Check diagonal
+    for (let colToCheck=col, rowToCheck=row;
+      rowToCheck<6 && colToCheck<7 && grid[rowToCheck][colToCheck] === playerId;
+      rowToCheck++, colToCheck++, hasMatchDiagonal++);
+    for (let colToCheck=col-1, rowToCheck=row-1;
+      rowToCheck>=0 && colToCheck>=0 && grid[rowToCheck][colToCheck] === playerId;
+      rowToCheck--, colToCheck--, hasMatchDiagonal++);
+      console.dir('hasMatchDiagonal ' + hasMatchDiagonal)
+    if (hasMatchDiagonal >= 4) return true
+    return false
+}
+
+Promise.resolve(true)
     .then(function(){
+      console.dir('init websocket')
       // Init websocket events
       ws.on('connection', (socket) => {
         socket.emit('userId', socket.id)
@@ -128,6 +134,9 @@ initDB()
           const gameInfoJson = JSON.stringify(currentGameInfo)
           socket.emit('gridChange', gameInfoJson)
           opponentSocket.emit('gridChange', gameInfoJson)
+          const isAWinner = check4InARow(currentGameInfo.grid, row, gameInfo.moveCol, socket.id)
+          console.dir('isAWinner ' + isAWinner)
+          if (isAWinner) socket.emit('winner')
         })
       })
       return

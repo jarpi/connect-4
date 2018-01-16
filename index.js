@@ -137,6 +137,7 @@ Promise.resolve(true)
           const isAWinner = check4InARow(currentGameInfo.grid, row, gameInfo.moveCol, socket.id)
           console.dir('isAWinner ' + isAWinner)
           if (isAWinner) socket.emit('winner')
+          gamesInProgress[gameInfo.gameId] = null
         })
       })
       return

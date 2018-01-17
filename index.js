@@ -122,6 +122,7 @@ Promise.resolve(true)
           console.dir('move received')
           console.dir(gameInfo)
           console.dir(currentGameInfo)
+          if (!currentGameInfo) return
           const row = currentGameInfo.grid.reduce((acc, r, i) => {
     				return (!r[gameInfo.moveCol] ? i : acc)
     			}, null)

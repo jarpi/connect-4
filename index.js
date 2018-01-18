@@ -51,11 +51,11 @@ const check4InARow = (grid, row, col, playerId) => {
     // Check diagonal
     for (let colToCheck=col, rowToCheck=row;
       rowToCheck<6 && colToCheck<7 && grid[rowToCheck][colToCheck] === playerId;
-      rowToCheck++, colToCheck++, hasMatchDiagonal++);
-    for (let colToCheck=col-1, rowToCheck=row-1;
+      rowToCheck++, colToCheck--, hasMatchDiagonal++);
+    for (let colToCheck=col+1, rowToCheck=row-1;
       rowToCheck>=0 && colToCheck>=0 && grid[rowToCheck][colToCheck] === playerId;
-      rowToCheck--, colToCheck--, hasMatchDiagonal++);
-      console.dir('hasMatchDiagonal ' + hasMatchDiagonal)
+      rowToCheck--, colToCheck++, hasMatchDiagonal++);
+    console.dir('hasMatchDiagonal ' + hasMatchDiagonal)
     if (hasMatchDiagonal >= 4) return true
     return false
 }
@@ -125,8 +125,8 @@ Promise.resolve(true)
           if (!currentGameInfo) return
           const row = currentGameInfo.grid.reduce((acc, r, i) => {
     				return (!r[gameInfo.moveCol] ? i : acc)
-    			}, null)
-          if (!row) return socket.emit('invalidMove')
+    			}, -1)
+          if (row<0) return socket.emit('invalidMove')
     			currentGameInfo.grid[row][gameInfo.moveCol] = socket.id
           const players = currentGameInfo.gameId.split('/')
           const opponentId = players.find(p => { return p !== currentGameInfo.turn })

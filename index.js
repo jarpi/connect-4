@@ -50,11 +50,26 @@ const check4InARow = (grid, row, col, playerId) => {
     if (hasMatchHorizontal >= 4) return true
     // Check diagonal
     for (let colToCheck=col, rowToCheck=row;
-      rowToCheck<6 && colToCheck<7 && grid[rowToCheck][colToCheck] === playerId;
-      rowToCheck++, colToCheck--, hasMatchDiagonal++);
-    for (let colToCheck=col+1, rowToCheck=row-1;
+    rowToCheck<6 && colToCheck<7 && grid[rowToCheck][colToCheck] === playerId;
+    rowToCheck++, colToCheck++, hasMatchDiagonal++);
+
+    for (let colToCheck=col-1, rowToCheck=row-1;
       rowToCheck>=0 && colToCheck>=0 && grid[rowToCheck][colToCheck] === playerId;
+      rowToCheck--, colToCheck--, hasMatchDiagonal++);
+
+    console.dir('hasMatchDiagonal ' + hasMatchDiagonal)
+    if (hasMatchDiagonal >= 4) return true
+
+    hasMatchDiagonal=0
+
+    for (let colToCheck=col, rowToCheck=row;
+      rowToCheck<6 && colToCheck>=0 && grid[rowToCheck][colToCheck] === playerId;
+      rowToCheck++, colToCheck--, hasMatchDiagonal++);
+
+    for (let colToCheck=col+1, rowToCheck=row-1;
+      rowToCheck>=0 && colToCheck<7 && grid[rowToCheck][colToCheck] === playerId;
       rowToCheck--, colToCheck++, hasMatchDiagonal++);
+
     console.dir('hasMatchDiagonal ' + hasMatchDiagonal)
     if (hasMatchDiagonal >= 4) return true
     return false

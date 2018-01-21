@@ -1,6 +1,6 @@
 .cell {
-  height:100px;
-  width:100px;
+  height:5em;
+  width:5em;
   border:1px solid red;
 }
 .user-move {

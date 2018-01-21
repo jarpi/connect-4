@@ -1,3 +1,3 @@
-.cell{height:100px;width:100px;border:1px solid red}.user-move{background-color:pink}.opponent-move{background-color:#00f}
-.users-list{height:100px;width:100px;border:1px solid red}
-.users-list{height:100px;width:100px;border:1px solid red}
+.cell{height:5em;width:5em;border:1px solid red}.user-move{background-color:pink}.opponent-move{background-color:#00f}
+.invitations-list{height:100px;width:100px}
+.users-list{height:100px;width:100px}

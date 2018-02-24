@@ -138,6 +138,7 @@ Promise.resolve(true)
           console.dir(gameInfo)
           console.dir(currentGameInfo)
           if (!currentGameInfo) return
+          if (!currentGameInfo.turn === socket.id) return socket.emit('invalidMove')
           const row = currentGameInfo.grid.reduce((acc, r, i) => {
     				return (!r[gameInfo.moveCol] ? i : acc)
     			}, -1)
